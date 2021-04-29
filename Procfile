@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run notbremse.py
+web: sh pipenv run streamlit run notbremse.py
