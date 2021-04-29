@@ -1,1 +1,1 @@
-web: sh pipenv run streamlit run notbremse.py
+web: pipenv run streamlit run notbremse.py --server.port $PORT
