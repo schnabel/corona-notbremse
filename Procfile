@@ -1,1 +1,1 @@
-web: streamlit run notbremse.py
+web: pipenv run streamlit run notbremse.py
