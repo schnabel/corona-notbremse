@@ -1,3 +1,5 @@
+from datetime import date
+
 import altair as alt
 import numpy as np
 import pandas as pd
@@ -108,6 +110,10 @@ def show_traffic_light(color):
     )
 
 covid_data = load_covid_data()
+if key_data.Meldedatum.max() + pd.Timedelta('1D') < date.today():
+    st.caching.clear_cache()
+    covid_data = load_covid_data()
+
 einwohner = pd.read_csv('Einwohnerzahlen.csv')
 
 
