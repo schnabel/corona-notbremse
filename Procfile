@@ -1,1 +1,1 @@
-web: setup.sh && streamlit run notbremse.py
+web: sh setup.sh && streamlit run notbremse.py
