@@ -110,7 +110,7 @@ def show_traffic_light(color):
     )
 
 covid_data = load_covid_data()
-if key_data.Meldedatum.max() + pd.Timedelta('1D') < date.today():
+if covid_data.Meldedatum.max() + pd.Timedelta('1D') < date.today():
     st.caching.clear_cache()
     covid_data = load_covid_data()
 
