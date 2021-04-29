@@ -1,1 +1,1 @@
-streamlit run notbremse.py
+web: streamlit run notbremse.py
