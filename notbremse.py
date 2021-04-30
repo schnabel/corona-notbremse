@@ -106,7 +106,7 @@ def show_traffic_light(color):
             Aktuell gelten die Regeln für eine 7 Tage Inzidenz {value}.
         </div>
         """,
-        height=150
+        height=170
     )
 
 covid_data = load_covid_data()
