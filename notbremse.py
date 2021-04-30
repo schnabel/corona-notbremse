@@ -110,10 +110,6 @@ def show_traffic_light(color):
     )
 
 covid_data = load_covid_data()
-# if covid_data.Meldedatum.max() + pd.Timedelta('1D') < date.today():
-#     st.caching.clear_cache()
-#     covid_data = load_covid_data()
-
 einwohner = pd.read_csv('Einwohnerzahlen.csv')
 
 
@@ -161,6 +157,8 @@ selected_landkreise = st.sidebar.multiselect(
     einwohner.Region
 )
 
+show_verlauf = st.sidebar.checkbox("Inzidenzverlauf anzeigen")
+
 if selected_landkreise:
     inzidenz_data = get_inzidenz_data(selected_landkreise)
 
@@ -173,23 +171,22 @@ if selected_landkreise:
     period = pd.date_range(end=inzidenz_data.Meldedatum.max(), periods=10, freq="D")
     notbremse_mask = inzidenz_data.Meldedatum.isin(period) & inzidenz_data.Region.isin(selected_landkreise)
     notbremse_data = inzidenz_data[notbremse_mask]
-    notbremse_data.Meldedatum = notbremse_data.Meldedatum.dt.strftime('%Y-%m-%d')
-    notbremse_data.set_index(['Region', 'Meldedatum'], inplace=True)
-    foo = notbremse_data[['Inz7T']].unstack()
+    notbremse_data = notbremse_data.pivot(index='Region', columns='Meldedatum', values='Inz7T')
+    notbremse_data.columns = notbremse_data.columns.astype(str)
 
+    if show_verlauf:
+        st.write("# Inzidenzverlauf:")
+        st.dataframe(notbremse_data.style.applymap(color_notbremse)) 
 
-    st.write("# Inzidenzverlauf:")
-    st.dataframe(foo.style.applymap(color_notbremse))
+        inzidenz_plot = alt.Chart(inzidenz_data[inzidenz_data.Region.isin(selected_landkreise)]).mark_line().encode(
+            x='Meldedatum',
+            y=alt.Y('Inz7T'),
+            color="Region",
+        ).interactive(True)
 
-    inzidenz_plot = alt.Chart(inzidenz_data[inzidenz_data.Region.isin(selected_landkreise)]).mark_line().encode(
-        x='Meldedatum',
-        y=alt.Y('Inz7T'),
-        color="Region",
-    ).interactive(True)
+        inzidenz_plot += alt.Chart(pd.DataFrame({'y': [165]})).mark_rule(color="blue").encode(y='y').interactive(True)
+        inzidenz_plot += alt.Chart(pd.DataFrame({'y': [150]})).mark_rule(color="red").encode(y='y').interactive(True)
+        inzidenz_plot += alt.Chart(pd.DataFrame({'y': [100]})).mark_rule(color="yellow").encode(y='y').interactive(True)
+        inzidenz_plot.interactive(True).properties(width=800)
 
-    inzidenz_plot += alt.Chart(pd.DataFrame({'y': [165]})).mark_rule(color="blue").encode(y='y').interactive(True)
-    inzidenz_plot += alt.Chart(pd.DataFrame({'y': [150]})).mark_rule(color="red").encode(y='y').interactive(True)
-    inzidenz_plot += alt.Chart(pd.DataFrame({'y': [100]})).mark_rule(color="yellow").encode(y='y').interactive(True)
-    inzidenz_plot.interactive(True).properties(width=800)
-
-    st.altair_chart(inzidenz_plot, use_container_width=True)
+        st.altair_chart(inzidenz_plot, use_container_width=True)
