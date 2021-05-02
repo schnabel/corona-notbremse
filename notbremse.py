@@ -99,12 +99,14 @@ def show_traffic_light(color):
     elif color == "blau":
         value = "> 165"
 
+
+    st.write(f'### Aktuell gelten die Regeln für eine 7 Tage Inzidenz {value}.')
     components.html(
         style + f"""
-        <div>
-            <span class="css-ampel ampel{color}"><span></span></span>
-            Aktuell gelten die Regeln für eine 7 Tage Inzidenz {value}.
-        </div>
+        <span class="css-ampel ampel{color}">
+            <span>
+            </span>
+        </span>
         """,
         height=170
     )
