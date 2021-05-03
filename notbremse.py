@@ -135,7 +135,7 @@ def get_inzidenz_data(landkreise):
 
 def get_ampel_color(inz7T):
     ampel = "gruen"
-    for i, val in enumerate(inz7T):
+    for i, val in enumerate(inz7T[:-1]):
         if i > 2:
             w3 = min(inz7T[i-3:i])
             if (w3 >= 100) & (ampel == "gruen"):
