@@ -154,6 +154,8 @@ def get_ampel_color(inz7T):
                 ampel = "gruen"
     return ampel
 
+st.markdown('Die Informationen der Bundesregierung zum Infektionsschutzgesetz finden die [hier](https://www.bundesregierung.de/breg-de/suche/bundesweite-notbremse-1888982).')
+
 selected_landkreise = st.sidebar.multiselect(
     'Landkreis',
     einwohner.Region
