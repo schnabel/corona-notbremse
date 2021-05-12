@@ -1,8 +1,9 @@
-from datetime import date
+import logging
+from pathlib import Path
 
 import altair as alt
-import numpy as np
 import pandas as pd
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -10,10 +11,34 @@ st.set_page_config(layout="wide")
 st.title("Bundes-Notbremse Ampel")
 pd.set_option('precision', 2)
 
+def is_covid_file_up_to_date():
+    covid_path = Path('./covid.csv')
+    up_to_date = False
+    if covid_path.is_file():
+        covid_data = pd.read_csv('covid.csv', usecols=["Datenstand"], nrows=10)
+        datenstand = pd.to_datetime(covid_data.Datenstand.str.split(',').str[0], dayfirst=True).max()
+        up_to_date = datenstand == (pd.Timestamp.today().normalize())
+        logging.info("Found covid.csv with Datenstand: %s", datenstand)
+    return up_to_date
+
+
+def download_covid_data():
+    logging.info('Downloading covid.csv')
+    url='https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0.csv'
+    response = requests.get(url, stream = True)
+
+    text_file = open("covid.csv","wb")
+    for chunk in response.iter_content(chunk_size=1024):
+        text_file.write(chunk)
+    text_file.close()
+
+
 @st.cache
 def load_covid_data():
+    if not is_covid_file_up_to_date():
+        download_covid_data()
     cols = ["IdLandkreis", "Meldedatum", "AnzahlFall", "NeuerFall"]
-    covid = pd.read_csv('https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0.csv', usecols=cols, parse_dates=['Meldedatum'])
+    covid = pd.read_csv('covid.csv', usecols=cols, parse_dates=['Meldedatum'])
     covid.Meldedatum = pd.DatetimeIndex(covid.Meldedatum.dt.date)
     return covid
 

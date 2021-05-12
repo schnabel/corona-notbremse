@@ -5,11 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 jupyterlab = "*"
+pylint = "*"
 
 [packages]
 altair = "*"
 pandas = "*"
 streamlit = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"
