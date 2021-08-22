@@ -24,7 +24,7 @@ def is_covid_file_up_to_date():
 
 def download_covid_data():
     logging.info('Downloading covid.csv')
-    url='https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0.csv'
+    url='https://www.arcgis.com/sharing/rest/content/items/f10774f1c63e40168479a1feb6c7ca74/data'
     response = requests.get(url, stream = True)
 
     text_file = open("covid.csv","wb")
